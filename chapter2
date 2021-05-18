@@ -1,0 +1,19 @@
+2-7 -- 別名をつける　AS
+SELECT 費目 AS ITEM, 入金額 AS RECEIVE, 出金額 AS PAY
+  FROM 家計簿 AS MONEYBOOK
+  WHERE 費目 = '給料'
+
+
+2-8
+UPDATE 家計簿
+  SET 入金額 = 99999
+
+-- 条件が設定されていないため全て更新される。
+
+2-9 
+UPDATE 家計簿
+   SET 入金額 = 99999
+  WHERE 日付 = '2018-02-03'
+
+--条件を設定するとそれのみ変更される。
+
