@@ -1,1 +1,149 @@
+4-2 --重複を除外する
+
+SELECT DISTINCT 入金額
+　FROM 家計簿
+
+4-3 
+SELECT DISTINCT 費目
+  FROM 家計簿
+
+4-4
+SELECT *
+  FROM 家計簿
+ ORDER BY 出金額
+
+4-5 --降順で並び替える
+SELECT *
+  FROM 家計簿
+ ORDER BY 日付 DESC
+
+4-6 --　複数の列を並び替えられる
+SELECT *
+  FROM 家計簿
+ ORDER BY 入金額 DESC, 出金額 DESC
+
+4-7 -- 列番号の指定 4-6と同じ結果
+SELECT *
+  FROM 家計簿
+ ORDER BY 4, 5 DESC
+
+4-8
+SELECT 費目
+  FROM 家計簿 
+ ORDER BY 出金額 DESC
+OFFSET 0 ROWS
+ FETCH NEXT 3 ROWS ONLY
+
+-- OFFSETには先頭から除く行数
+-- DETCH NEXTは、表示したい行数
+
+4-9
+SELECT 費目
+  FROM 家計簿 
+ ORDER BY 出金額 DESC
+OFFSET 2 ROWS
+ FETCH NEXT 1 ROWS ONLY
+
+4-10 取得行を限定する他の方法
+SELECT 費目, 出金額
+  FROM 家計簿
+ ORDER BY 出金額 DESC 
+ LIMIT 3
+
+
+4-11 --和集合
+SELECT 費目, 入金額, 出金額  
+  FROM 家計簿
+ UNION
+SELECT 費目, 入金額, 出金額  
+  FROM 家計簿アーカイブ
+ ORDER BY 2, 3, 1
+
+4-12 --差集合
+SELECT 費目 
+  FROM 家計簿
+ECXEPT 
+SELECT 費目
+  FROM 家計簿アーカイブ 
+
+4-13 --積集合
+SELECT 費目 
+  FROM 家計簿
+INTERSECT 
+SELECT 費目
+  FROM 家計簿アーカイブ 
+
+
+練習問題
+4-1
+
+1:
+SELECT *
+  FROM 注文履歴
+ ORDER BY 注文番号 DESC, 注文枝番 DESC
+
+2:
+SELECT DISTINCT 商品名
+  FROM 注文履歴
+ WHERE 日付 > '2018-01-01'
+   AND 日付 < '2018-01-31'
+ ORDER BY 商品名 DESC
+
+3:
+SELECT 注文番号, 注文枝番, 注文金額
+  FROM 注文履歴
+ WHERE 分類 = "1"
+ ORDER BY 注文金額 DESC
+OFFSET 1 ROWS
+　FETCH NEXT 3 ROWS
+
+4:
+SELECT 日付, 商品, 単価, 数量, 注文金額
+  FROM 注文履歴
+ WHERE 分類 = "3"
+   AND 数量 >= 2
+ ORDER BY 日付 DESC, 数量 DESC
+
+5:
+SELECT DISTINCT 分類, 商品名, サイズ, 単価
+  FROM 注文履歴
+ WHERE サイズ = "1"
+ UNION
+SELECT DISTINCT 分類, 商品名, NULL, 単価
+  FROM 注文履歴
+ WHERE サイズ = "2"
+ UNION
+SELECT DISTINCT 分類, 商品名, NULL, 単価
+  FROM 注文履歴
+ WHERE サイズ = "3"
+ ORDER BY 分類 DESC, 商品名 DESC
+
+4-2
+1:
+SELECT 値
+  FROM 奇数
+ UNION 
+SELECT 値
+  FROM 偶数
+
+2:
+SELECT 値
+  FROM 整数
+EXCEPT 
+SELECT 値
+  FROM 偶数
+
+3:
+SELECT 値
+  FROM 整数
+INTERSEPT 
+SELECT 値
+  FROM 偶数
+
+4:
+SELECT 値
+  FROM 奇数
+INTERCEPT 
+SELECT 値
+  FROM 偶数
 
