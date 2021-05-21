@@ -1,0 +1,150 @@
+6-1
+SELECT SUM(出金額) AS 出金額の合計
+  FROM 家計簿
+
+-- SUM関数　値を合計する
+-- 必ず1行になる
+
+6-2
+SELECT 
+  SUM(出金額) AS 合計出金,
+  AVG(出金額) AS 平均出金額,
+  MAX(出金額) AS 最も大きな散財,
+  MIN(出金額) AS 最も少額の支払い
+  FROM 家計簿
+
+6-3
+SELECT COUNT(*) AS 食費の行数
+  FROM 家計簿
+ WHERE 費目 = '食費'
+
+6-4
+SELECT 日付, SUM(出金額) AS 出金額計
+ FROM 家計簿
+
+6-5
+SELECT AVG(COALESCE(出金額, 0)) AS 出金額の平均
+  FROM 家計簿
+
+6-6
+SELECT '食費' AS 費目, SUM(出金額) AS 費目別の出金額の合計
+  FROM 家計簿
+ WHERE 費目 = '食費'
+ 
+SELECT '給料' AS 費目, SUM(出金額) AS 費目別の出金額の合計
+  FROM 家計簿
+ WHERE 費目 = 給料
+ 
+SELECT '教育娯楽費' AS 費目, SUM(出金額) AS 費目別の出金額の合計
+  FROM 家計簿
+ WHERE 費目 = '教育娯楽費'
+
+6-7
+SELECT 費目, SUM(出金額) AS 費目別の出金額の合計
+  FROM 家計簿
+ GROUP BY 費目
+ 
+
+-- GROUP BYで分類する
+
+6-8
+SELECT 費目, SUM(出金額) AS 費目別の出金額の合計
+  FROM 家計簿
+ WHERE SUM(出金額) > 0
+ GROUP BY 費目
+
+-- WEHRE句を追加するもエラー
+-- WHERE句が最初に処理が起こる為、SUM(出金額)が未定の状態だからエラーが起こる
+
+6-9
+SELECT 費目, SUM(出金額) AS 費目別の出金額の合計
+  FROM 家計簿
+ GROUP BY 費目
+ HAVING SUM(出金額) > 0
+
+--HAVINGを使用
+
+6-10
+SELECT SUM(入金額) AS 入金額の合計,
+       SUM(出金額) AS 出金額の合計
+  FROM 講座入出金テーブル
+ WHERE 日付 >= '2017-01-01' AND 日付 < '2018-01-01'
+
+
+練習問題
+6-1
+1:
+SELECT SUM(降水量), AVG(最高気温), AVG(最低気温)
+  FROM 都市別気象観測
+
+2:
+SELECT SUM(降水量), AVG(最高気温), AVG(最低気温)
+  FROM 都市別気象観測
+ WHERE 都市名 = '東京'
+
+3:
+SELECT 都市名, AVG(降水量), MIN(最高気温), MAX(最低気温)
+  FROM 都市別気象観測
+ GROUP BY 都市名 
+
+4:
+SELECT 月, AVG(降水量), AVG(最高気温), AVG(最低気温)
+  FROM 都市別気象観測
+ GROUP BY 月 
+
+5:
+SELECT 都市名, MAX(最高気温)
+  FROM 都市別気象観測
+　GROUP BY 都市名
+ WHERE 最高気温 >= 38
+
+6:
+SELECT 都市名, MIN(最低気温)
+  FROM 都市別気象観測
+　GROUP BY 都市名
+ WHERE 最低気温 <= -10
+
+
+6-2
+
+1:
+SELECT COUNT(*)　AS 入室中写真数
+  FROM 入退室管理
+ WHERE 退室 IS NULL
+
+2:
+SELECT 社員名, COUNT(*) AS 入室回数
+　FROM 入退室管理
+ GROUP BY 社員名
+ ORDER BY 2 DESC 
+
+-- 2 = COUNT の箇所
+
+3:
+SELECT 
+CASE 事由区分 
+  WHEN '1' THEN 'メンテナンス'
+  WHEN '2' THEN 'リリース作業'
+  WHEN '3' THEN '障害対応' 
+  WHEN '9' THEN 'その他'  END 
+COUNT(*) AS 入室回数
+  FROM 入退室管理
+ GROUP BY 事由区分
+
+4:
+SELECT 社員名, COUNT(*) AS 入室回数
+  FROM 入退室管理
+ GROUP BY 社員名
+HAVING COUNT(*) >= 10 
+
+5:
+SELECT 日付, COUNT(社員名) AS 対応社員数
+  FROM 入退室管理
+ WHERE 事由区分 = '3'
+ GROUP BY 日付
+
+6-3
+
+2, 5
+
+ 
