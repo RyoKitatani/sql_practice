@@ -1,0 +1,142 @@
+
+-- DDL Data Definition Language
+-- DCL Data Control Language 管理者が使用する命令
+
+
+10-1 -- テーブル作成
+CREATE TABLE 会計簿 (
+  日付	DATE,
+  費用ID INTEGER,
+  メモ	VACHAR(100),
+  入金額	INTEGER,
+  出金額	INTEGER,
+)
+
+10-2
+INSERT INTO 家計簿(日付, メモ, 出金額) 
+     VALUES ('2018-04-12', '詳細は後で', 60000)
+
+--　指定していない列はNULLになる。ただ、デフォルト値が勝手に入れば便利。
+
+
+10-3
+CREATE TABLE 会計簿 (
+  日付	DATE,
+  費用ID INTEGER,
+  メモ	VACHAR(100) DEFAUTLT '不明',
+  入金額	INTEGER DEFAUTLT 0,
+  出金額	INTEGER DEFAUTLT 0
+)
+
+-- DEAFULTと記載する
+
+
+10-4 --テーブルの列追加と削除
+ALTER TABLE 会計簿 ADD 関連日 DATA;
+ALTER TABLE 家計簿 DROP 関連日;
+
+
+1-5 --制約
+CREATE TABLE 会計簿 (
+  日付	DATE   NOT NULL,
+  費用ID INTEGER,
+  メモ	VACHAR(100) DEFAUTLT '不明'  NOT NULL,
+  入金額	INTEGER DEFAUTLT 0 CHECK(入金額 >= 0),
+  出金額	INTEGER DEFAUTLT 0 CHECK(入金額 >= 0)
+)
+
+CEATE TABLE 費目 (
+  ID 　INTEGER,
+ 名前　 VARCHER  UNIQUE
+)
+
+-- NOT NULL制約 NULLの格納を許可しない⇨入力必須になる
+-- UNIQUE制約　内容が重複しない
+-- CHECK制約 条件式が真となる値だけが格納を許される。
+
+10-6
+INSERT INTO 家計簿 (日付,  費目ID, メモ, 入金額, 出金額)
+     VALUES ('2018-04-02', '2', '家賃', '0', 60000)
+
+-- メモには、家賃と入る。
+
+INSERT INTO 家計簿 (日付,  費目ID, 入金額, 出金額)
+     VALUES ('2018-04-05', '3', '0', 1350)
+
+-- メモには、不明と入る。
+
+
+10-7 --　主キー
+CEATE TABLE 費目 (
+  ID 　INTEGER  PRIMARY KEY,
+ 名前　 VARCHER  UNIQUE
+)
+
+
+10-8
+CEATE TABLE 費目 (
+  ID 　INTEGER,
+ 名前　 VARCHER  UNIQUE,
+ PRIMARY KEY(ID, 名前)
+)
+
+
+10-9 --参照性制約を崩す例　
+
+DELETE FROM 費目 WHERE ID = 2;
+-- 利用している費目を費目テーブルから削除
+
+UPDATE 費目 SET ID = 5 WHERE ID = 1;
+-- 利用している費目のIDを変更
+
+INSERT INTO 家計簿 (日付, 費目ID, 入金額, 出金額)
+     VALUES ('2018-04-16', 99, 0, 800);
+-- 追加する際に、存在しない費目IDを指定する
+
+UPDATE 家計簿 SET 費目ID = 99;
+ WHERE 日付 = '2018-04-10';
+-- 更新する際に、存在しない費目IDを指定する
+
+
+10-10
+CREATE TABLE 会計簿 (
+  日付	DATE        NOT NULL, 
+  費用ID INTEGER     REFERENCES 費目(ID)   
+  メモ	VACHAR(100) DEFAUTLT '不明'  NOT NULL,
+  入金額	INTEGER     DEFAUTLT 0 CHECK(入金額 >= 0),
+  出金額	INTEGER     DEFAUTLT 0 CHECK(入金額 >= 0)
+)
+
+
+練習問題
+10-1
+イ,ウ,キ
+
+10-2
+CREATE TABEL 学部 (
+  ID CHAR(1) PRIMARY KEY,
+ 名前 VARCHAR(20)  UNIQUE NOT NULL,
+ 備考 VARCHAR(100) DEFAULT '特になし NOT NULL,
+)
+
+10-3
+CREATE TABLE 学生 (
+ 学籍番号  CHAR(8)     PRIMARY KEY,
+ 名前     VARCHAR(30) NOT NULL,
+ 生年月日  DATE        NOT NULL,
+ 血液型　  CHAR(2)　   CHECK(血液型 IN (A, B, C, D) OR 血液型 IS NULL)
+ 学部ID   CHAR(1)　   REFERENCES 学部（ID）
+)
+
+10-4
+学生テーブルで使用している学部IDを学部テーブルから消す
+学生テーブルに学部テーブルに登録されていない学部IDを登録する
+
+10-5
+BEGIN;
+UPDATE 学生
+   SET 学部ID = 'K'
+ WHERE 学部ID = 'R'
+DELETE FROM 学部
+ WHERE ID = 'R'
+COMMIT;
