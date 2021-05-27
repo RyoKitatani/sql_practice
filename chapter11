@@ -1,0 +1,80 @@
+11-1
+CREATE INDEX 費目IDインデックス ON 家計簿(費目ID);
+CREATE INDEX メモインデックス ON 家計簿(メモ);
+
+-- DROP INDEXで削除するときにも、この名前を使う。
+
+
+--以下は、インデックスの効果が得られやすい典型的な3つのケース
+
+11-2 --完全一致　　--WHERE句
+SELECT * FROM 家計簿
+ WHERE メモ = '不明'
+
+11-3 --前方一致
+SELECT * FROM 家計簿
+ WHERE メモ LIKE '1月%'
+
+
+11-4 --ORDER BY句
+SELECT * FROM 家計簿
+ ORDER BY 費目ID
+
+
+11-5  --JOINによる結合条件
+SELECT * FROM 家計簿
+  JOIN 費目
+    ON 家計簿.費目ID = 費目.ID
+
+--インデックスのメリット
+高速化が可能
+
+--デメリット
+索引情報を保存⇨ディスク容量を消費する。
+テーブルを更新するとインデックスも更新するため、オーバーヘッドが増える。(付随処理)
+
+そのため、濫用は避ける
+
+
+11-6
+SELECT * F FROM 家計簿
+ WHERE 日付 >= '2018-04-01'
+   AND 日付 <= '2018-04-30';
+SELECT DISTINCT 費目ID FROM 家計簿
+ WHERE 日付 >= '2018-04-01'
+　 AND 日付 <= '2018-04-30';
+
+-- WHERE句が重複している
+
+⇨ VIEWを作成する
+
+11-7
+CREATE VIEW 家計簿4月 AS
+SELECT * FROM 家計簿
+ WHERE 日付 >= '2018-04-01'
+　 AND 日付 <= '2018-04-30';
+
+11-8
+SELECT * FROM 家計簿4月
+SELECT DISTINCT 費目ID FROM 家計簿4月
+
+
+練習問題
+11-1
+A: ACID
+B: 制約
+C: 永続性
+D: ログファイル
+E: ロールフォワード
+
+11-2
+1.名前、学部ID
+2.
+CREATE VIEW 学部名付きの学生 AS
+SELECT S.学籍番号, S.名前, S.生年月日, S.血液型, S.学部ID, B名前 AS 学部名
+  FROM 学生 AS S
+  JOIN 学部 AS B
+    ON S.学部ID = B.ID
+
+INSERT INTO 学生(学籍番号, 名前, 生年月日, 血液型, 学部ID, 登録順)
+     VALUES ('B1101022', '古島 進', '1993-02-12', 'A', 'K', ISTD.NEXTVAL) 
